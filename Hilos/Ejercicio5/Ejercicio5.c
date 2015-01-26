@@ -21,12 +21,7 @@ int main(int argc, char *argv[])
 	void *rest;
 	int aux=0;
 
-	
-
-	
-
-	
-	
+		
 	char auxiliar[20];
 
 	pthread_t thd[elementos];
@@ -35,7 +30,7 @@ int main(int argc, char *argv[])
 	{
 		strcpy(auxiliar,argv[i+1]);
 		pthread_create(&thd[i],NULL,(void*)cuenta,(void *)auxiliar);
-		//printf ("Ejecutando %d\n",i);
+	
 		pthread_join(thd[i],&rest);
 		aux=aux+rest;
 
