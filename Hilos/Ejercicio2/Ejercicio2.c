@@ -1,63 +1,71 @@
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <pthread.h>
 
 void *suma();
 
+int main()
+{
 
-int main(){
-
-	int elementos=0;
-	void *res;
+	int numhilos=0;
 	int i=0;
-	int total=0;
-	
+	int total=0; 
+	void *res;
+	int aux;
 
-	printf("Introduzca el numero de hebras que desea: ");
-	scanf("%d",&elementos);
+	printf("¿Cuantos elementos aleatorios desea producir?: ");
+	scanf("%d",&numhilos);
 
-	pthread_t thd[elementos];
-	
+	pthread_t thd[numhilos];
 
-	for (i=0;i<elementos;i++)
+	for (i=0;i<numhilos;i++)
 	{
-		pthread_create(&thd[i],NULL,(void*) suma, NULL);
-
-	
-		
+		pthread_create(&thd[i],NULL,(void*)suma,NULL);
+		sleep(2);
 	}
 
-	
-	for (i=0;i<elementos;i++)
+	for (i=0;i<numhilos;i++)
 	{
-		
+		pthread_join(thd[i],(void **)&res);
 
-		
-		pthread_join(thd[i],&res);
-		
-		printf("%d\n",res);
-		total=total+res;
 
+		total=total+(*(int*)res);
+
+		free(res);
 	}
-	printf("%d\n",total);
-	//printf("El total de las sumas parciales es: %d\n", suma);
+
+	printf("El resultado es %d\n",total);
+
+
+
 	return 0;
 }
 
-void *suma()
-{
+void *suma(){
+
 	srand(time(NULL));
 
-	int num1=0;
-	int num2=0;
+	int num1=0,num2=0;
+	int *suma;
+
+	suma=(int *)malloc(sizeof(int));
 
 	num1=rand()%100;
-	printf("El primer numero aleantorio es: %d\n", num1);
 	num2=rand()%100;
-	printf("El segundo numero aleantorio es: %d\n", num2);
 
-	num1=num1+num2;
+	printf("El primer numero aleatorio es %d\n", num1);
+	printf("El segundo numero aleatorio es %d\n", num2);
 
-	pthread_exit((int *)num1);
+	*suma=num1+num2;
+
+	printf("La suma de los dos es: %d\n", *suma);
+
+
+
+	pthread_exit((void *) suma);
+
 }
